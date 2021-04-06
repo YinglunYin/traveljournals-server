@@ -1,0 +1,73 @@
+[
+  {
+    "_id" : "123",
+    "title" : "Test Journal",
+    "text" : "<p><h3>This is a test journal</h3></p>",
+    "author" : "yin",
+    "date" : "05-04-2021",
+    "liker" : "yin",
+    "placeDetails" :{
+      "address_components" : [
+        {
+          "long_name" : "San Jose",
+          "short_name" : "San Jose",
+          "types" : [ "locality", "political" ]
+        },
+        {
+          "long_name" : "Santa Clara County",
+          "short_name" : "Santa Clara County",
+          "types" : [ "administrative_area_level_2", "political" ]
+        },
+        {
+          "long_name" : "California",
+          "short_name" : "CA",
+          "types" : [ "administrative_area_level_1", "political" ]
+        },
+        {
+          "long_name" : "United States",
+          "short_name" : "US",
+          "types" : [ "country", "political" ]
+        }
+      ],
+      "formatted_address" : "San Jose, CA, USA",
+      "geometry" : {
+        "location" : {
+          "lat" : 37.3382082,
+          "lng" : -121.8863286
+        },
+        "viewport" : {
+          "northeast" : {
+            "lat" : 37.46923035270112,
+            "lng" : -121.5891539898311
+          },
+          "southwest" : {
+            "lat" : 37.12449296199827,
+            "lng" : -122.0456719320532
+          }
+        }
+      },
+      "name" : "San Jose",
+      "photos" : [
+        {
+          "height" : 1065,
+          "html_attributions" : [
+            "\u003ca href=\"https://maps.google.com/maps/contrib/103829844627175481707\"\u003eSaeed Ullah\u003c/a\u003e"
+          ],
+          "photo_reference" : "ATtYBwK1YM4Yo_JxFY7lcgN0MltfVq8lEt86qQgEago5_ijqfC774QbEQmzyiuLw__tgD1xSex8pX92x6USFSa0eKQ_cssTDSbsCWeykQsTQEHO4j8rtzcDcbPao7hLXdLtBatcCXzlxuyJt9W9tA92M6e4WYCtsA-vbiMDJKjuISHSyxlEm",
+          "width" : 1438
+        },
+        {
+          "height" : 3456,
+          "html_attributions" : [
+            "\u003ca href=\"https://maps.google.com/maps/contrib/107556611913165334818\"\u003eIndiana Dirkzwager\u003c/a\u003e"
+          ],
+          "photo_reference" : "ATtYBwK8GRPf9ASCojJf6LGBsg2oeBjI3snY6EToa4Xn-rgTZmm2rBm-y8Mo3fl4k0MmEK7wg0t4TuIZed35Wgc2McA1uP_95rrokZypEFaMafzHOCsOKBTSPzzg6OnkQRuh9bUpNE_rxA3UT-D9fOuK8zayJiHa-a4nYgsIUOKiPqKsI4ot",
+          "width" : 4608
+        }
+      ],
+      "place_id" : "ChIJ9T_5iuTKj4ARe3GfygqMnbk",
+      "types" : [ "locality", "political" ]
+    }
+  }
+]
+
