@@ -11,9 +11,27 @@ app.all(function (req, res, next) {
     next();
 });
 
-// require('./controllers/quizzes-controller')(app)
-// require('./controllers/question-controller')(app)
+const mongoose = require('mongoose');
+const databaseName = 'traveljournals'
+
+
+
+// let connectionString =
+//     'mongodb://localhost/';
+//
+// connectionString += databaseName;
+//
+// mongoose.connect(connectionString,
+//                  {useNewUrlParser: true ,useUnifiedTopology: true});
+
+
+const mongoose = require('mongoose');
+const databaseName = 'traveljournals'
+const userName = "user123"
+const password = "user123"
+
+mongoose.connect(`mongodb://${userName}:${password}@traveljournals.ajbuj.mongodb.net:27017/${databaseName}?retryWrites=true&w=majority`,
+                 {useNewUrlParser: true ,useUnifiedTopology: true});
+
 require('./controllers/user-controller')(app)
-
-
 app.listen(PORT);

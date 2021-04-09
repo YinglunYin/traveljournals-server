@@ -1,4 +1,4 @@
-const usersDao = require('../models/user.dao.server');
+const usersDao = require('../daos/user-dao');
 
 module.exports = (app) => {
     const session = require('express-session')
@@ -23,10 +23,7 @@ module.exports = (app) => {
             })
     }
 
-    require('../data/db')();
-
-
-    login = (req, res) => {
+    let login = (req, res) => {
         const username = req.body.username;
         const password = req.body.password;
         usersDao.findUserByUsernamePassword(username, password)
@@ -41,17 +38,34 @@ module.exports = (app) => {
 
     }
 
-    currentUser = (req, res) => {
+    let currentUser = (req, res) => {
         console.log(req.session)
         return res.json(req.session["currentUser"])
     }
 
-
-    logout = (req, res) => {
+    let logout = (req, res) => {
         req.session.destroy()
         res.send(200)
     }
 
+    let hello = (req, res) => {
+        res.send("Hello World")
+    }
+
+    let testdatabase = (req, res) => {
+        usersDao.createUser({
+            username: "testdatabase",
+            password: "1234",
+            email:"ttttt",
+            type:"USER"
+                            }).then(r => res.json(r))
+    }
+
+    app.get('/', hello)
+    app.get('/testdatabase', testdatabase)
+    app.get('/users',(req,res)=>{
+        usersDao.findAllUsers().then((r)=>res.json(r))
+    })
     // app.post('/api/login', login)
     // app.post('/api/register', register)
     // app.post('/api/currentUser',

@@ -14,6 +14,19 @@
             <SshTunnelingConfiguration />
           </option>
         </ServerConfiguration>
+        <ServerConfiguration>
+          <option name="label" value="onineData" />
+          <option name="password" value="user123" />
+          <option name="serverUrls">
+            <list>
+              <option value="traveljournals.ajbuj.mongodb.net:27017" />
+            </list>
+          </option>
+          <option name="sshTunnelingConfiguration">
+            <SshTunnelingConfiguration />
+          </option>
+          <option name="username" value="user123" />
+        </ServerConfiguration>
       </list>
     </option>
     <option name="shellPath" value="/usr/local/mongodb/bin/mongo" />

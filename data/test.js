@@ -1,6 +1,6 @@
 require('./db')();
-let usersDao = require('../models/user.dao.server');
-let journalsDao = require('../models/journal.dao.server');
+let usersDao = require('../daos/user-dao');
+let journalsDao = require('../daos/journals-dao');
 // userDao.createUser({
 //     username: "test2",
 //     password:"123456",
