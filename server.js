@@ -28,7 +28,7 @@ const databaseName = 'traveljournals'
 const userName = "user123"
 const password = "user123"
 
-mongoose.connect(`mongodb://${userName}:${password}@traveljournals.ajbuj.mongodb.net:27017/${databaseName}?retryWrites=true&w=majority`,
+mongoose.connect('mongodb://user123:user123@traveljournals.ajbuj.mongodb.net:27017/traveljournals',
                  {useNewUrlParser: true ,useUnifiedTopology: true});
 
 require('./controllers/user-controller')(app)
