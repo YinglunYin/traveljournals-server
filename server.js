@@ -10,11 +10,9 @@ app.all(function (req, res, next) {
                'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     next();
 });
-
-const mongoose = require('mongoose');
-const databaseName = 'traveljournals'
-
-
+//
+// const mongoose = require('mongoose');
+// const databaseName = 'traveljournals'
 
 // let connectionString =
 //     'mongodb://localhost/';
