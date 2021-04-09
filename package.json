@@ -2,9 +2,10 @@
   "name": "traveljournals-server",
   "version": "1.0.0",
   "description": "travel journal server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "yinglun yin",
   "license": "ISC",
@@ -12,6 +13,7 @@
     "@googlemaps/google-maps-services-js": "^3.1.16",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "express-session": "^1.17.1"
+    "express-session": "^1.17.1",
+    "mongoose": "^5.12.3"
   }
 }
