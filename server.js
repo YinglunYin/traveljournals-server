@@ -1,35 +1,34 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 52134
 
-app.all(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+app.use(function (req, res, next) {
+    const origin = req.headers.origin // In order to use cookie, we must get origin dynamically
+    res.header("Access-Control-Allow-Origin", origin);
+    // Causing CORS Error
+    // res.header("Access-Control-Allow-Origin", origin);
     res.header('Access-Control-Allow-Headers',
                'Content-Type, X-Requested-With, Origin');
     res.header('Access-Control-Allow-Methods',
                'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header("Access-Control-Allow-Credentials", "true");
     next();
 });
-//
-// const mongoose = require('mongoose');
-// const databaseName = 'traveljournals'
 
-// let connectionString =
-//     'mongodb://localhost/';
-//
-// connectionString += databaseName;
-//
-// mongoose.connect(connectionString,
-//                  {useNewUrlParser: true ,useUnifiedTopology: true});
-
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded
+({extended: false}))
+app.use(bodyParser.json())
 
 const mongoose = require('mongoose');
 const databaseName = 'traveljournals'
 const userName = "user123"
 const password = "user123"
 
-mongoose.connect('mongodb://user123:user123@traveljournals.ajbuj.mongodb.net:27017/traveljournals',
-                 {useNewUrlParser: true ,useUnifiedTopology: true});
+mongoose.connect(
+    "mongodb+srv://user123:user123@cluster0.ajbuj.mongodb.net/traveljournals?retryWrites=true&w=majority",
+    {useNewUrlParser: true, useUnifiedTopology: true});
 
 require('./controllers/user-controller')(app)
+require('./controllers/journal-controller')(app)
 app.listen(PORT);
