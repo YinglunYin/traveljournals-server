@@ -21,7 +21,7 @@ const getPhoto = (photos) => {
 
 module.exports = (app) => {
 
-    let createJournal = (req, res) => {
+    let createJournal = async (req, res) => {
         const title = req.body.title;
         const textRaw = req.body.textRaw;
         const textHtml = req.body.textHtml;
@@ -29,81 +29,25 @@ module.exports = (app) => {
         const place = req.body.place;
         const author = req.body.author;
 
-        userDao.findUserById(author)
-            .then((user) => {
-                placeServer.findPlaceById(place.place_id)
-                    .then((re_p) => {
-                        if (re_p) {
-                            // place exist
-                            journalServices.createJournal({
-                                                              title: title,
-                                                              textRaw: textRaw,
-                                                              textHtml: textHtml,
-                                                              abstract: abstract,
-                                                              author: user._id,
-                                                              img: getPhoto(place.photo),
-                                                              place: re_p._id,
-                                                              liker: []
-                                                          })
-                                .then((re_j) => {
-                                    // add journal to user
-                                    userServer.addJournalToUser(author, re_j._id)
-                                        .then((re_u) => {
-                                            placeServer.addJournalToPlace(re_p._id, re_j._id)
-                                                .then(() => {
-                                                    let newJournal = {
-                                                        id: re_j._id
-                                                    }
-                                                    utils.responseClient(res, 200, 10,
-                                                                         "Journal Created Successfully",
-                                                                         newJournal)
-                                                })
-                                        })
+        let re = await journalServices.createJournal({
+                                                           title: title,
+                                                           textRaw: textRaw,
+                                                           textHtml: textHtml,
+                                                           abstract: abstract,
+                                                           place: place,
+                                                           author, author
+                                                       })
 
-                                })
+        if (re === 9) {
+            utils.responseClient(res, 400, 9,
+                                 "journal created failed",
+                                 {})
 
-                        } else {
-                            // place not exist
-                            placeServer.createPlace({
-                                                        _id: place.place_id,
-                                                        name: place.name,
-                                                        address: place.address,
-                                                        lat: place.lat,
-                                                        lng: place.lng,
-                                                        journals: []
-                                                    })
-                                .then((re_p) => {
-                                    journalServices.createJournal({
-                                                                      title: title,
-                                                                      textRaw: textRaw,
-                                                                      textHtml: textHtml,
-                                                                      abstract: abstract,
-                                                                      author: user._id,
-                                                                      img: getPhoto(place.photo),
-                                                                      place: re_p._id,
-                                                                      liker: []
-                                                                  })
-                                        .then((re_j) => {
-                                            // add journal to user
-                                            userServer.addJournalToUser(author, re_j._id)
-                                                .then((re_u) => {
-                                                    placeServer.addJournalToPlace(re_p._id,
-                                                                                  re_j._id)
-                                                        .then(() => {
-                                                            let newJournal = {
-                                                                id: re_j._id
-                                                            }
-                                                            utils.responseClient(res, 200, 10,
-                                                                                 "Journal Created Successfully",
-                                                                                 newJournal)
-                                                        })
-                                                })
-
-                                        })
-                                })
-                        }
-                    })
-            })
+        } else {
+            utils.responseClient(res, 200, 10,
+                                 "Journal Created Successfully",
+                                 {id: re._id})
+        }
     }
 
     let findJournals = (req, res) => {
@@ -124,42 +68,48 @@ module.exports = (app) => {
 
     }
 
-    let updateJournal = (req, res) => {
+    let updateJournal = async (req, res) => {
         const _id = req.body._id;
         const textRaw = req.body.textRaw;
         const textHtml = req.body.textHtml;
         const title = req.body.title;
         const abstract = req.body.abstract;
+        const place = req.body.place;
 
-        journalServices.updateJournal(_id, {
+        let re = await journalServices.updateJournal(_id, {
             textRaw: textRaw,
             textHtml: textHtml,
             title: title,
             abstract: abstract,
+            place: place
         })
-            .then((re) => {
-                if (re) {
-                    utils.responseClient(res, 200, 14, 'Update successfully')
-                }
-            })
+
+        if(re === 14){
+            utils.responseClient(res, 200, 14, 'Update successfully')
+        }else{
+            utils.responseClient(res, 400, 13, 'Update failed')
+        }
+
     }
 
-    let likeJournal = (req, res) => {
-        const userId = req.body.userId;
+    let likeJournal = async (req, res) => {
+        const username = req.body.username;
         const journalId = req.body.journalId;
         const likeFlag = req.body.likeFlag;
         if (likeFlag === 'like') {
-            userDao.addJournalTolikes(userId, journalId)
-                .then((re) => {
-                    if (re.nModified >= 1) {
-                        journalsDao.likeAJournal(userId, journalId)
-                            .then((re) => {
-                                utils.responseClient(res, 200, 16, "like successfully", re)
-                            })
-                    }else{
-                        utils.responseClient(res, 200, 15, "repeat", re)
-                    }
-                })
+            let code = await journalServices.likeAJournal(username, journalId)
+            if (code === 16) {
+                utils.responseClient(res, 200, 16, "like successfully")
+            } else {
+                utils.responseClient(res, 200, 15, "repeat")
+            }
+        }else if(likeFlag === 'dislike'){
+            let code = await journalServices.dislikeAJournal(username, journalId)
+            if (code === 16) {
+                utils.responseClient(res, 200, 16, "dislike successfully")
+            } else {
+                utils.responseClient(res, 200, 15, "repeat")
+            }
         }
     }
 
@@ -177,31 +127,36 @@ module.exports = (app) => {
 
     let deleteJournal = (req, res) => {
         const journalId = req.body.id;
-        journalServices.findJournalById(journalId)
+        journalServices.deleteJournal(journalId)
             .then((re) => {
-                userServer.removeJournalFromUser(re.author._id, journalId)
-                    .then((re1) => {
-                        userDao.deleteJournal(journalId)
-                            .then((re2) => {
-                                journalsDao.deleteJournal(journalId)
-                                    .then(() => {
-                                        utils.responseClient(res, 200, 22, "successgully", {})
-                                    })
-                            })
-                    })
-            })
+                console.log("succ")
+                console.log(re)
+                utils.responseClient(res, 200, 22, "delete succeed", re)
+            }).catch((err) => {
+            console.log("error")
+            console.log(err)
+        })
     }
 
     let findPlaceJournal = (req, res) => {
         const placeId = req.body.placeId
         journalsDao.findPlaceJournal(placeId)
-            .then((re)=>{
-                if(re){
+            .then((re) => {
+                if (re) {
                     utils.responseClient(res, 200, 26, "successgully", re.journals)
-                }else{
+                } else {
                     utils.responseClient(res, 200, 25, "none", {})
                 }
             })
+    }
+
+    let findAllJournals = async (req, res) => {
+        let re = await journalServices.findAllJournals()
+        if(re === 33){
+            utils.responseClient(res, 400, 33, "failed")
+        }else{
+            utils.responseClient(res, 200, 34, "succeed", re)
+        }
     }
 
     app.post('/api/journals/createJournal', createJournal)
@@ -211,6 +166,7 @@ module.exports = (app) => {
     app.post('/api/journals/popular', findPopularJournal)
     app.post('/api/journals/delete', deleteJournal)
     app.post('/api/journals/place', findPlaceJournal)
+    app.post('/api/journals/journals', findAllJournals)
     // const add = (req, res) => {
     //     const a = parseInt(req.params['paramA'])
     //     const b = parseInt(req.params['paramB'])

@@ -33,19 +33,20 @@ findJournalById = (id) => {
 
 likeAJournal = (userId, journalId) => {
     return journalsModel.updateOne({_id: journalId},
-                                   {$push: {liker: journalId}, $inc: {like_num: +1}})
+                                   {$push: {liker: userId}, $inc: {like_num: +1}})
 }
 
 findPlaceJournal = (placeId) => {
     return placeModel.findOne({_id: placeId}).populate("journals", {title: 1, abstract: 1, like_num: 1, img: 1})
 }
 
-disLikeAJournal = (user, journal) => {
-
+disLikeAJournal = (userId, journalId) => {
+    return journalsModel.updateOne({_id: journalId},
+                                   {$pull: {liker: userId}, $inc: {like_num: -1}})
 }
 
-deleteJournalByAuthor = () => {
-
+findAllJournals = () =>{
+    return journalsModel.find({}, {title: 1, date:1, author:1, place:1}).populate("author", "username").populate("place", "name")
 }
 
 module.exports =
@@ -57,5 +58,6 @@ module.exports =
         disLikeAJournal,
         findJournalByLikeNum,
         deleteJournal,
-        findPlaceJournal
+        findPlaceJournal,
+        findAllJournals
     }

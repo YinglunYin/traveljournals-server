@@ -11,36 +11,26 @@ module.exports = (app) => {
                         secret: 'any string'
                     }));
 
-    let register = (req, res) => {
+    let register = async (req, res) => {
         let username = req.body.username
         let password = req.body.password
         let email = req.body.email
         let type = req.body.type
 
-        usersServices.findUserByName(username)
-            .then((user) => {
-                if (user) {
-                    // already exist
-                    return utils.responseClient(res, 400, 3, "Already Exist", {})
-                } else {
-                    let newUser = {
-                        username: username,
-                        password: password,
-                        email: email,
-                        type: type
-                    }
-                    usersServices.createUser(newUser)
-                        .then(user => {
-                            let data = {};
-                            data.username = user.username;
-                            data.type = user.type;
-                            data.userId = user._id;
-                            req.session['currentUser'] = data;
-                            utils.responseClient(res, 200, 2, "Register Succeed", data)
-                            return;
-                        })
-                }
-            })
+        let re = await usersServices.createUser(
+            {username: username, password: password, email: email, type: type})
+
+        if(re === 3){
+            // already exist
+            return utils.responseClient(res, 400, 3, "Already Exist", {})
+        }else{
+            let data = {};
+            data.username = re.username;
+            data.type = re.type;
+            data.userId = re._id;
+            req.session['currentUser'] = data;
+            utils.responseClient(res, 200, 2, "Register Succeed", data)
+        }
 
     }
 
@@ -112,22 +102,14 @@ module.exports = (app) => {
             })
     }
 
-    let deleteUser = (req, res) => {
-        const userId = req.body.user.id
-
-
-
-        usersServices.deleteUser(userId)
-            .then((re) => {
-                if (user) {
-                    utils.responseClient(res, 200, 8, "Deleted Successfully", {})
-                    return;
-                } else {
-                    utils.responseClient(res, 400, 7, "Deleted Failed")
-                    return;
-                }
-            })
-
+    let deleteUser = async (req, res) => {
+        const userId = req.body.userId;
+        let code = await usersServices.deleteUser(userId);
+        if (code === 8) {
+            utils.responseClient(res, 200, 8, "Deleted Successfully", {})
+        } else {
+            utils.responseClient(res, 400, 7, "Deleted Failed")
+        }
     }
 
     let hello = (req, res) => {
@@ -166,21 +148,13 @@ module.exports = (app) => {
 
     let findAllUsers = (req, res) => {
         usersServices.findAllUsers()
-            .then((re)=>{
-                if(re){
+            .then((re) => {
+                if (re) {
                     utils.responseClient(res, 200, 30, "succeed", re)
                 }
             })
     }
 
-    let testdatabase = (req, res) => {
-        usersDao.createUser({
-                                username: "testdatabase",
-                                password: "1234",
-                                email: "ttttt",
-                                type: "USER"
-                            }).then(r => res.json(r))
-    }
 
     app.post('/api/users/login', login)
     app.post('/api/users/register', register)
@@ -192,17 +166,8 @@ module.exports = (app) => {
     app.post('/api/users/journals', findUserJournals)
     app.post('/api/users/likes', findUserLikes)
     app.post('/api/users/', findAllUsers)
-    app.post('/api/users/delete', findAllUsers)
+    app.post('/api/users/delete', deleteUser)
 
     app.get('/', hello)
-    app.get('/testdatabase', (req, res) => {
-        usersServices.removeJournalFromUser("607059eea38a9687a7ac7a77", "6075c825ca3d4da365905306")
-            .then((re) => res.json(re))
-    })
-    app.get('/users', (req, res) => {
-        usersDao.findAllUsers().then((r) => res.json(r))
-            .then((re) => {
-                res.json(re)
-            })
-    })
+
 }
