@@ -26,14 +26,11 @@ const sessionConfig = {
     saveUninitialized: false,
     secret: "Test",
     cookie : {
+        secure: true,
+        maxAge: 10000,
         sameSite: 'none',
     }
 };
-
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1); // trust first proxy
-    sessionConfig.cookie.secure = true; // serve secure cookies
-}
 
 app.use(session(sessionConfig));
 
