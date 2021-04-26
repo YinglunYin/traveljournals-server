@@ -21,18 +21,18 @@ app.use(bodyParser.urlencoded
 ({extended: false}))
 app.use(bodyParser.json())
 
-const sessionConfig = {
-    resave: false,
-    saveUninitialized: false,
-    secret: "Test",
-    cookie : {
-        secure: true,
-        maxAge: 10000,
-        sameSite: 'none',
-    }
-};
-
-app.use(session(sessionConfig));
+// const sessionConfig = {
+//     resave: false,
+//     saveUninitialized: false,
+//     secret: "Test",
+//     cookie : {
+//         secure: true,
+//         maxAge: 10000,
+//         sameSite: 'none',
+//     }
+// };
+//
+// app.use(session(sessionConfig));
 
 const mongoose = require('mongoose');
 // const databaseName = 'traveljournals'
